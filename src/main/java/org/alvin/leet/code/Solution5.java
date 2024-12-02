@@ -1,49 +1,38 @@
 package org.alvin.leet.code;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 public class Solution5 {
 
-    public String longestPalindrome(String s) {
-        int len = s.length();
-        if (len < 2) {
-            return s;
-        }
-        int maxLen = 1;
-        int begin = 0;
+    public int findMinArrowShots(int[][] points) {
 
-        boolean[][] dp = new boolean[len][len];
-        for (int i = 0; i < len; i++) {
-            // 一个字符的时候肯定是回文
-            dp[i][i] = true;
-        }
-        char[] sCharArray = s.toCharArray();
-        // 一个字符肯定是回文， 所以从2 开始
-        for (int l = 2; l <= len; l++) {
-            for (int i = 0; i < len; i++) {
-                // 其实位置为i， 长度为l 介绍位置为j
-                int j = i + l - 1;
-                if (j >= len) {
-                    break;
+        List<int[]> ans = new ArrayList<>();
+        Arrays.sort(points, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] source, int[] targe) {
+                if(source[0] == targe[0]){
+                    return 0;
                 }
 
-                if (sCharArray[i] != sCharArray[j]) {
-                    dp[i][j] = false;
-                } else {
-                    // 相等， 长度小于3 肯定都是回文
-                    if (l <= 3) {
-                        dp[i][j] = true;
-                    } else {
-                        dp[i][j] = dp[i + 1][j - 1];
-                    }
-                }
+                return source[0] > targe[0] ? 1: -1;
+            }
+        });
 
-                if (dp[i][j] && l > maxLen) {
-                    maxLen = l;
-                    begin = i;
-                }
+        for (int i = 0; i < points.length; i++){
+            int min = points[i][0];
+            int max = points[i][1];
+            int index = ans.size()-1;
+            if(ans.isEmpty() || ans.get(index)[1] < min){
+                ans.add(new int[]{min, max});
+            }else{
+                ans.get(index)[1] = Math.min(max, ans.get(index)[1]);
             }
         }
-        return s.substring(begin, begin + maxLen);
+//        return ans.toArray(new int[ans.size()][]);
+        return ans.size();
     }
-
 
 }
